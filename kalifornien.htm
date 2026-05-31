@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalifornien: Das goldene Paradoxon</title>
+    <style>
+        :root {
+            --light-bg: #f6f8fa;
+            --card-bg: #ffffff;
+            --text-dark: #2f3542;
+            --text-muted: #747d8c;
+            --inland-color: #d39e00; /* Warmes Gold/Erdbraun für das Agrar-Inland */
+            --coast-color: #00a8ff;  /* Ozean-/Tech-Blau für die Küstenmetropolen */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #ffffff;
+            border-bottom: 1px solid #e1e8ed;
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Interaktiver Splitscreen */
+        .container {
+            position: relative;
+            width: 100%;
+            height: 75vh;
+            display: flex;
+        }
+
+        .split {
+            position: relative;
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 3rem;
+            transition: flex 0.6s ease-in-out, filter 0.5s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .split::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.12;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            z-index: 1;
+        }
+
+        /* Symbolische Bilder für Kaliforniens Kontraste (Agrar vs. Tech/Küste) */
+        .left::before {
+            background-image: url('https://images.unsplash.com/photo-1594901351221-df3f7074e50d?auto=format&fit=crop&w=1200&q=80'); /* Central Valley Felder */
+        }
+
+        .right::before {
+            background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80'); /* Modernes Tech-Büro / Küste */
+        }
+
+        .left {
+            background: linear-gradient(135deg, #fffbf2, #fbf2db);
+            border-right: 1px solid #e1e8ed;
+        }
+
+        .right {
+            background: linear-gradient(135deg, #f0f8ff, #e1f5fe);
+        }
+
+        /* Interaktiver Hover-Effekt */
+        .container:has(.left:hover) .left { flex: 1.8; }
+        .container:has(.left:hover) .right { flex: 0.6; filter: blur(1px); }
+        .container:has(.right:hover) .right { flex: 1.8; }
+        .container:has(.right:hover) .left { flex: 0.6; filter: blur(1px); }
+
+        .split:hover::before {
+            transform: scale(1.03);
+            opacity: 0.22;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .content h2 {
+            font-size: 2.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .left h2 { color: #b7791f; }
+        .right h2 { color: #0086c3; }
+
+        .content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        /* Info-Dashboard Sektion */
+        .dashboard {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard h3 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            border-top: 5px solid #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .card.inland-card { border-color: var(--inland-color); }
+        .card.coast-card { border-color: var(--coast-color); }
+
+        .card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .stat {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 0.5rem 0 1rem 0;
+            display: block;
+        }
+
+        .inland-card .stat { color: var(--inland-color); }
+        .coast-card .stat { color: var(--coast-color); }
+
+        /* Interaktive Fakten-Box */
+        .interactive-section {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: #ffffff;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .btn {
+            background: var(--coast-color);
+            color: #fff;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.3);
+        }
+
+        .btn:hover {
+            background: #0086c3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 168, 255, 0.4);
+        }
+
+        #fact-box {
+            margin-top: 2rem;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 60px;
+            color: var(--text-dark);
+            line-height: 1.6;
+            transition: opacity 0.3s ease;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem;
+            background: #ffffff;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid #e1e8ed;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Kalifornien: Das goldene Paradoxon</h1>
+        <p>Die tiefe Kluft zwischen dem Silicon Valley und dem agrarischen Landesinneren</p>
+    </header>
+
+    <!-- Splitscreen-Bereich -->
+    <section class="container">
+        <div class="split left">
+            <div class="content">
+                <h2>Das vergessene Inland</h2>
+                <p>Das Central Valley liefert ein Viertel aller Nahrungsmittel der USA. Doch hinter der landwirtschaftlichen Produktivität verbergen sich extreme Armut, oft illegale Saisonarbeit, schlechte medizinische Versorgung und dramatische Dürreprobleme.</p>
+            </div>
+        </div>
+        <div class="split right">
+            <div class="content">
+                <h2>Die High-Tech-Küste</h2>
+                <p>Das Epizentrum der globalen Digitalwirtschaft, von Apple über Google bis hin zu führenden KI-Konzernen. Ein Ballungsraum von unermesslichem Wohlstand, hochbezahlten Talenten und globalem kulturellen Einfluss.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Sektion -->
+    <section class="dashboard">
+        <h3>Sozialräumliche Disparitäten im Fokus</h3>
+        <div class="grid">
+            <div class="card inland-card">
+                <h4>Die Kehrseite der Medaille</h4>
+                <span class="stat">Central Valley</span>
+                <p>Einige Landkreise im Agrar-Inland weisen trotz der enormen Wirtschaftskraft Kaliforniens extrem hohe Armutsraten auf, die weit über dem US-Durchschnitt liegen.</p>
+            </div>
+            <div class="card coast-card">
+                <h4>Wirtschaftsmacht</h4>
+                <span class="stat">5. Stelle</span>
+                <p>Wäre Kalifornien ein eigener Staat, wäre es die fünftgrößte Volkswirtschaft der Erde – fast vollständig angetrieben durch Tech, Entertainment und Finanzen an der Küste.</p>
+            </div>
+            <div class="card inland-card">
+                <h4>Umwelt-Ungerechtigkeit</h4>
+                <span class="stat">Wasser & Luft</span>
+                <p>Während die Küste in Green-Tech investiert, leidet das Inland unter ausgetrockneten Brunnen, Grundwasserverschmutzung durch Dünger und extremer Feinstaubbelastung.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interaktive Fakten-Box -->
+    <section class="interactive-section">
+        <h3 style="margin-bottom: 0.5rem;">Erfahre mehr über Kaliforniens Geografie</h3>
+        <p style="margin-bottom: 2rem; color: var(--text-muted);">Klicke auf den Button, um die massiven Disparitäten des "Golden State" zu verstehen.</p>
+        <button class="btn" onclick="showNextFact()">Nächsten Fakt anzeigen</button>
+        <div id="fact-box">Klicke auf den Button, um zu starten...</div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Geografische Fallstudie: USA / Kalifornien. Entwickelt für Bildungszwecke.</p>
+    </footer>
+
+    <script>
+        const facts = [
+            "Fakt 1: Die 'Zwei Kalifornien' spalten sich auch beim Wasser: Über 80% des staatlich gemanagten Wassers fließen in die gigantische Landwirtschaft des Inlands, während Küstenstädte teure Entsalzungsanlagen bauen müssen.",
+            "Fakt 2: Im Silicon Valley verdienen Software-Ingenieure oft sechsstellige Einstiegsgehälter – während die Feldarbeiter im Central Valley, die das Land ernähren, meist unter dem Mindestlohn und ohne Krankenversicherung arbeiten.",
+            "Fakt 3: Die Disparität treibt die Lebenshaltungskosten an der Küste so hoch, dass ein massiver 'Inland-Migration'-Trend eingesetzt hat. Familien fliehen vor den Mieten in San Francisco in die heißen Wüstenstädte des Inlands.",
+            "Fakt 4: Während Tech-Konzerne an CO2-neutralen Rechenzentren arbeiten, atmen die Menschen in Städten wie Fresno oder Bakersfield durch die intensive Pestizidnutzung und die Kessellage die schlechteste Luft der USA ein."
+        ];
+
+        let currentFactIndex = 0;
+
+        function showNextFact() {
+            const factBox = document.getElementById('fact-box');
+            factBox.style.opacity = 0;
+            
+            setTimeout(() => {
+                factBox.innerText = facts[currentFactIndex];
+                factBox.style.opacity = 1;
+                currentFactIndex = (currentFactIndex + 1) % facts.length;
+            }, 200);
+        }
+    </script>
+</body>
+</html>
+
